@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio. Tecnologías JavaScript y AJAX</title>
+    <style>
+        /* Estilo general */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #4caf50; /* Verde manzana oscuro */
+            color: #ffffff; /* Blanco para el texto general */
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Estilo para los fieldsets */
+        fieldset {
+            border: 2px solid #ffffff; /* Bordes blancos */
+            border-radius: 8px;
+            margin: 20px;
+            padding: 15px;
+            background-color: #3e8e41; /* Verde más oscuro */
+        }
+
+        legend {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffffff; /* Blanco */
+        }
+
+        /* Estilo para los botones */
+        input[type="button"] {
+            background-color: #ffffff; /* Botones con fondo blanco */
+            color: #4caf50; /* Verde manzana para el texto */
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        input[type="button"]:hover {
+            background-color: #3e8e41; /* Verde más oscuro */
+            color: #ffffff; /* Blanco en hover */
+        }
+
+        /* Estilo para los campos de texto */
+        input[type="text"] {
+            border: 1px solid #ffffff; /* Bordes blancos */
+            border-radius: 5px;
+            padding: 8px;
+            margin: 5px 0;
+            width: calc(100% - 20px);
+            font-size: 1rem;
+            color: #4caf50; /* Texto verde */
+            background-color: #ffffff; /* Fondo blanco */
+        }
+
+        /* Estilo para el título */
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #ffffff; /* Blanco */
+        }
+
+        /* Estilo para las zonas de resultados */
+        pre, #cabecerasHttp, #codigoEstado {
+            background-color: #ffffff;
+            color: #000000; /* Texto negro profesional */
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1rem;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #ffffff; /* Blanco para los labels */
+        }
+    </style>
+    <script>
+        function esPalindromo(cadena) {
+            const cadenaLimpia = cadena.toLowerCase().replace(/[^a-z0-9]/g, "");
+            if (cadenaLimpia === cadenaLimpia.split("").reverse().join("")) {
+                alert("La cadena es un palíndromo");
+            } else {
+                alert("La cadena NO es un palíndromo");
+            }
+        }
+
+        function esMayor(num1, num2) {
+            num1 = parseFloat(num1);
+            num2 = parseFloat(num2);
+            if (isNaN(num1) || isNaN(num2)) {
+                alert("Por favor, introduce números válidos.");
+                return;
+            }
+            if (num1 > num2) {
+                alert("El número " + num1 + " es mayor.");
+            } else {
+                alert("El número " + num2 + " es mayor.");
+            }
+        }
+
+        function mostrarVocales(frase) {
+            if (!frase) {
+                alert("No ingresaste una frase.");
+                return;
+            }
+            let vocales = new Set();
+            for (let letra of frase.toLowerCase()) {
+                if ("aeiouáéíóúü".includes(letra)) {
+                    vocales.add(letra);
+                }
+            }
+            if (vocales.size > 0) {
+                alert(`Las vocales en la frase son: ${[...vocales].join(", ")}`);
+            } else {
+                alert("No se encontraron vocales en la frase.");
+            }
+        }
+
+        function contarVocales(frase) {
+            if (!frase) {
+                alert("No ingresaste una frase.");
+                return;
+            }
+            const contador = { a: 0, e: 0, i: 0, o: 0, u: 0 };
+            for (let letra of frase.toLowerCase()) {
+                if (contador.hasOwnProperty(letra)) {
+                    contador[letra]++;
+                }
+            }
+            let resultado = "Conteo de vocales:\n";
+            for (let vocal in contador) {
+                resultado += `${vocal.toUpperCase()}: ${contador[vocal]}\n`;
+            }
+            alert(resultado);
+        }
+
+        function getURL(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    let estadoTexto = '';
+                    switch (xhr.status) {
+                        case 404: estadoTexto = 'No encontrado'; break;
+                        case 200: estadoTexto = 'Completada'; break;
+                        case 301: estadoTexto = 'Recurso desplazado'; break;
+                        default: estadoTexto = 'Estado desconocido';
+                    }
+
+                    document.getElementById('codigoEstado').innerText = `${xhr.status} - ${estadoTexto}`;
+                    const cabeceras = xhr.getAllResponseHeaders();
+                    document.getElementById('cabecerasHttp').innerText = cabeceras || "No se encontraron cabeceras.";
+                }
+            };
+            xhr.send();
+        }
+    </script>
+</head>
+<body>
+    <h1>Laboratorio. Tecnologías JavaScript y AJAX</h1>
+
+    <!-- Punto 1 -->
+    <fieldset>
+        <legend>Punto 1: Palíndromo</legend>
+        <label for="txtPalindromo">Ingresa una cadena:</label>
+        <input type="text" id="txtPalindromo">
+        <input type="button" value="Detectar Palíndromo" onclick="esPalindromo(document.getElementById('txtPalindromo').value)">
+    </fieldset>
+
+    <!-- Punto 2 -->
+    <fieldset>
+        <legend>Punto 2: Comparar Números</legend>
+        <label for="txtNum1">Número 1:</label>
+        <input type="text" id="txtNum1">
+        <label for="txtNum2">Número 2:</label>
+        <input type="text" id="txtNum2">
+        <input type="button" value="¿Es mayor?" onclick="esMayor(document.getElementById('txtNum1').value, document.getElementById('txtNum2').value)">
+    </fieldset>
+
+    <!-- Punto 3 -->
+    <fieldset>
+        <legend>Punto 3: Vocales en una frase</legend>
+        <label for="txtFrase">Frase:</label>
+        <input type="text" id="txtFrase">
+        <input type="button" value="Extraer Vocales" onclick="mostrarVocales(document.getElementById('txtFrase').value)">
+    </fieldset>
+
+    <!-- Punto 4 -->
+    <fieldset>
+        <legend>Punto 4: Contar vocales</legend>
+        <label for="txtFraseVocales">Frase:</label>
+        <input type="text" id="txtFraseVocales">
+        <input type="button" value="Contar Vocales" onclick="contarVocales(document.getElementById('txtFraseVocales').value)">
+    </fieldset>
+
+    <!-- Punto 6 -->
+    <fieldset>
+        <legend>Punto 6: Consultar URL</legend>
+        <label for="url">Ingresa la URL:</label>
+        <input type="text" id="url">
+        <input type="button" value="Consultar URL" onclick="getURL(document.getElementById('url').value)">
+    </fieldset>
+
+    <!-- Punto 7 -->
+    <fieldset>
+        <legend>Punto 7: Código de Estado</legend>
+        <pre id="codigoEstado">Aquí aparecerá el código y texto de estado</pre>
+    </fieldset>
+
+    <!-- Punto 8 -->
+    <fieldset>
+        <legend>Punto 8: Cabeceras HTTP</legend>
+        <pre id="cabecerasHttp">Aquí aparecerán las cabeceras</pre>
+    </fieldset>
+</body>
+</html>
+
+
